@@ -1,24 +1,21 @@
 from typing import Tuple, TYPE_CHECKING
+from .vector import Vector
 
 if TYPE_CHECKING:
     from .component import Component
 
-Coordinate = Tuple[int, int]
-HitboxParameter = Tuple[int, int]
-HitboxCoordinates = Tuple[Coordinate, Coordinate, Coordinate, Coordinate]
-
 class Hitbox:
-    def __init__(self, component: 'Component', width: HitboxParameter, height: HitboxParameter):
+    def __init__(self, component: 'Component', width: Tuple[float, float], height: Tuple[float, float]):
         self.component = component
         self.width_range = tuple(sorted(width))
         self.height_range = tuple(sorted(height))
     
-    def get_coordinates(self) -> HitboxCoordinates:
+    def get_coordinates(self) -> Tuple[Vector, Vector, Vector, Vector]:
         return (
-            (self.left(), self.top()), 
-            (self.right(), self.top()), 
-            (self.left(), self.bottom()),
-            (self.right(), self.bottom()),
+            Vector(self.left(), self.top()), 
+            Vector(self.right(), self.top()), 
+            Vector(self.left(), self.bottom()),
+            Vector(self.right(), self.bottom()),
         )
     
     def left(self):
@@ -33,8 +30,8 @@ class Hitbox:
     def bottom(self):
         return self.component.pos.y + self.height_range[0]
 
-    def contains_point(self, point: Coordinate):
-        point_x, point_y = point
+    def contains_point(self, point: Vector):
+        point_x, point_y = point.array
         if not self.left() <= point_x <= self.right():
             return False
         if not self.bottom() <= point_y <= self.top():

@@ -18,7 +18,7 @@ class Collision:
 
     @staticmethod
     def handle(comp1: Component, comp2: Component):
-        if not comp1.is_collision(comp2):
+        if not comp1.is_collision(comp2) or not comp2.is_collision(comp1):
             return
         collision = Collision(comp1, comp2)
         if collision.is_between_types(Ball, Ball):

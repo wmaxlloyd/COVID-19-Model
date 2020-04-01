@@ -25,8 +25,11 @@ class Ball(Component):
             glVertex2f(*vertex.array)
         glEnd()
     
-    def is_collision(self, hitbox: Hitbox):
-        return super().is_collision(hitbox)
+    def is_collision(self, component: Component):
+        hitbox = component.get_hitbox()
+        hitbox.width_range = (hitbox.width_range[0] - self.radius, hitbox.width_range[1] + self.radius)
+        hitbox.height_range = (hitbox.height_range[0] - self.radius, hitbox.height_range[1] + self.radius)
+        return hitbox.contains_point(self.pos)
 
     def get_hitbox(self):
         return Hitbox(self, (-self.radius, self.radius), (-self.radius, self.radius))
