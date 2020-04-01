@@ -19,16 +19,16 @@ class Hitbox:
         )
     
     def left(self):
-        return self.component.pos.x + self.width_range[0]
+        return self.component.pos.x() + self.width_range[0]
     
     def right(self):
-        return self.component.pos.x + self.width_range[1] 
+        return self.component.pos.x() + self.width_range[1] 
     
     def top(self):
-        return self.component.pos.y + self.height_range[1]
+        return self.component.pos.y() + self.height_range[1]
     
     def bottom(self):
-        return self.component.pos.y + self.height_range[0]
+        return self.component.pos.y() + self.height_range[0]
 
     def contains_point(self, point: Vector):
         point_x, point_y = point.array

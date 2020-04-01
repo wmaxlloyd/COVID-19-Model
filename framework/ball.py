@@ -19,7 +19,7 @@ class Ball(Component):
     def draw(self):
         glBegin(GL_TRIANGLE_FAN)
         glVertex2f(*self.pos.array) # center of the circle
-        vertices = [ Vector(self.pos.x + rel_vertex.x, self.pos.y + rel_vertex.y) for rel_vertex in self.relative_vertices ]
+        vertices = [ Vector(self.pos.x() + rel_vertex.x(), self.pos.y() + rel_vertex.y()) for rel_vertex in self.relative_vertices ]
         vertices += [vertices[0]]
         for vertex in vertices:
             glVertex2f(*vertex.array)

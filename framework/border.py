@@ -11,11 +11,11 @@ class Border():
         hitbox = component.get_hitbox()
         vel = component.vel
         if hitbox.left() <= 0:
-            component.vel.set_x(max(vel.x, -1 * vel.x))
+            component.vel.array[0] = max(vel.x(), -1 * vel.x())
         elif hitbox.right() >= self.width:
-            component.vel.set_x(min(vel.x, -1 * vel.x))
+            component.vel.array[0] = min(vel.x(), -1 * vel.x())
 
         if hitbox.bottom() <= 0:
-            component.vel.set_y(max(vel.y, -1 * vel.y))
+            component.vel.array[1] = max(vel.y(), -1 * vel.y())
         elif hitbox.top() >= self.height:
-            component.vel.set_y(min(vel.y, -1 * vel.y))
+            component.vel.array[1] = min(vel.y(), -1 * vel.y())

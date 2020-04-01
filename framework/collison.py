@@ -41,11 +41,11 @@ class Collision:
         angle = ball1_rel_vel.get_angle_between(rel_pos_1_2)
         ball1_rel_vel_final = Vector.scale(
             reflection_vector,
-            ball1_rel_vel.magnitude * cos(ball1_rel_vel.get_angle_between(reflection_vector))
+            ball1_rel_vel.magnitude() * cos(ball1_rel_vel.get_angle_between(reflection_vector))
         )
         ball2_rel_vel_final = Vector.scale(
             rel_pos_1_2,
-            ball1_rel_vel.magnitude * cos(ball1_rel_vel.get_angle_between(rel_pos_1_2))
+            ball1_rel_vel.magnitude() * cos(ball1_rel_vel.get_angle_between(rel_pos_1_2))
         )
         ball1.vel = Vector.add(ball1_rel_vel_final, ball2.vel)
         ball2.vel = Vector.add(ball2_rel_vel_final, ball2.vel)
