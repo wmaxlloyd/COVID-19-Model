@@ -8,11 +8,7 @@ scene = Scene(window)
 generate = scene.generator()
 
 for i in range(10):
-    scene.add_componenet(Ball(
-        init_pos=generate.position(),
-        init_vel=generate.velocity(),
-        radius=20,
-    ))
+    generate.ball(radius=5)
 
 @window.event
 def on_draw():

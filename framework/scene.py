@@ -2,6 +2,7 @@ from pyglet.window import Window
 from typing import Dict
 from .component import Component
 from .collison import Collision
+from .hitbox import Hitbox
 from pyglet.gl import glClear, GL_COLOR_BUFFER_BIT
 from framework.random import Random
 import uuid
@@ -46,4 +47,8 @@ class Scene():
                 component2 = items[j][1]
                 Collision.handle(component, component2)
 
-            
+    def contains_collision_with(self, component: Component) -> bool:
+        for (_, scene_component) in self.components.items():
+            if scene_component.is_collision(component):
+                return True
+        return False
