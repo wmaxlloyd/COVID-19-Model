@@ -33,10 +33,6 @@ class Scene():
         glClear(GL_COLOR_BUFFER_BIT)
         for _, componet in self.components.items():
             componet.draw()
-    
-    # def __find_collisions(self):
-    #     self.bucket_componenets()
-    #     pass
 
     def __handle_collisions(self):
         items = list(self.components.items())

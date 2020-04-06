@@ -8,7 +8,7 @@ scene = Scene(window)
 generate = scene.generator()
 
 for i in range(10):
-    generate.ball(radius=5)
+    generate.ball(radius=20)
 
 @window.event
 def on_draw():

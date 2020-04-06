@@ -39,15 +39,12 @@ class Hitbox:
         return True
 
     def intersects(self, hitbox: 'Hitbox') -> bool:
-        currentHitboxCoordinates = self.get_coordinates()
-        targetHitboxCoordinates = hitbox.get_coordinates()
+        if (
+            self.bottom() > hitbox.top() or
+            self.top() < hitbox.bottom() or
+            self.right() < hitbox.left() or
+            self.left() > hitbox.right()
+        ):
+            return False
 
-        for coordinate in currentHitboxCoordinates:
-            if hitbox.contains_point(coordinate):
-                return True
-        
-        for coordinate in targetHitboxCoordinates:
-            if self.contains_point(coordinate):
-                return True
-
-        return False
+        return True
