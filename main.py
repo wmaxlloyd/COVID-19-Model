@@ -7,7 +7,7 @@ window = pyglet.window.Window()
 scene = Scene(window)
 generate = scene.generator()
 
-for i in range(10):
+for i in range(5):
     generate.ball(radius=20)
 
 @window.event

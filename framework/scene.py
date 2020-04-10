@@ -1,50 +1,53 @@
 from pyglet.window import Window
-from typing import Dict
+from typing import Set, List, Tuple
 from .component import Component
-from .collison import Collision
 from .hitbox import Hitbox
 from pyglet.gl import glClear, GL_COLOR_BUFFER_BIT
 from framework.random import Random
 import uuid
 from .border import Border
+from .scene_section_manager import SceneSectionManager
 
 class Scene():
-    def __init__(self, window: Window):
-        self.width = window.width
-        self.height = window.height
-        self.window = window
-        self.components: Dict[str, Component] = {}
-        self.speed_limits = (2,5)
-        self.border = Border(self.width, self.height)
+    def __init__(self, window: Window, section_dimensions: Tuple[int, int] = (5,5)):
+        self.__width = window.width
+        self.__height = window.height
+        self.__window = window
+        self.__components: Set[Component] = set()
+        self.__border = Border(self.__width, self.__height)
+        self.__section_manager = SceneSectionManager(self, 2, 2)
 
-    def generator(self):
-        return Random(self)
+    def generator(self, **kwargs):
+        return Random(self, kwargs)
+    
+    def width(self):
+        return self.__width
+    
+    def height(self):
+        return self.__height
+    
+    def border(self):
+        return self.__border
 
     def add_componenet(self, component: Component):
-        key = str(uuid.uuid4())
-        self.components[key] = component
+        self.__components.add(component)
+        self.__section_manager.classify_component(component)
     
     def update_state(self, *args):
-        for _, component in self.components.items():
+        self.__section_manager.handle_collisions()
+        self.__section_manager.reset()
+        for component in self.__components:
             component.update_position()
-        self.__handle_collisions()
+            self.__section_manager.classify_component(component)
 
     def draw(self):
         glClear(GL_COLOR_BUFFER_BIT)
-        for _, componet in self.components.items():
+        self.__section_manager.draw_sections()
+        for componet in self.__components:
             componet.draw()
 
-    def __handle_collisions(self):
-        items = list(self.components.items())
-        for i in range(len(items)):
-            component = items[i][1]
-            self.border.handle_component_collision(component)
-            for j in range(i + 1, len(items)):
-                component2 = items[j][1]
-                Collision.handle(component, component2)
-
     def contains_collision_with(self, component: Component) -> bool:
-        for (_, scene_component) in self.components.items():
+        for scene_component in self.__components:
             if scene_component.is_collision(component):
                 return True
         return False
