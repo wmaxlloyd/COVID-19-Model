@@ -1,5 +1,6 @@
 from .scene_section import SceneSection
 from typing import List, Tuple, TYPE_CHECKING
+from .collision import Collision
 
 if TYPE_CHECKING:
     from .scene import Scene
@@ -56,9 +57,11 @@ class SceneSectionManager:
                 scene_section.reset_components()
 
     def handle_collisions(self):
+        collisions: List[Tuple[Component, Component]] = []
         for scene_section_list in self.__section_matrix:
             for scene_section in scene_section_list:
-                scene_section.handle_collisions()
+                collisions += scene_section.get_possible_collisions()
+        Collision.handle_all(collisions)
     
     def draw_sections(self):
         for scene_section_list in self.__section_matrix:

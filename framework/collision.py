@@ -1,7 +1,7 @@
 from .component import Component
 from .border import Border
 from .ball import Ball
-from typing import Tuple
+from typing import Tuple, List
 from .vector import Vector
 from math import sin, cos
 
@@ -24,7 +24,17 @@ class Collision:
         if collision.is_between_types(Ball, Ball):
             return collision.__handle_collision_between_balls()
         raise Exception(f"Unrecognized collision {type(comp1)} & {type(comp2)}")
-            
+
+    @staticmethod  
+    def handle_all(collisions: List[Tuple[Component, Component]]):
+        handled_collisions: Set[int] = set()
+        for collision in collisions:
+            comp1, comp2 = collision
+            collision_id = comp1.id * comp2.id
+            if collision_id in handled_collisions:
+                continue
+            Collision.handle(comp1, comp2)
+            handled_collisions.add(collision_id)
     
     def __handle_collision_between_balls(self):
         ball1: Ball = self.components[0]

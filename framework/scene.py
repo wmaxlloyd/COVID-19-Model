@@ -15,7 +15,7 @@ class Scene():
         self.__window = window
         self.__components: Set[Component] = set()
         self.__border = Border(self.__width, self.__height)
-        self.__section_manager = SceneSectionManager(self, 2, 2)
+        self.__section_manager = SceneSectionManager(self, 10, 10)
 
     def generator(self, **kwargs):
         return Random(self, kwargs)

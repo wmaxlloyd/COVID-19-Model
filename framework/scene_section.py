@@ -1,7 +1,7 @@
 from .component import Component
 from .hitbox import Hitbox
-from .collison import Collision
 from typing import Set, Tuple, List, TYPE_CHECKING
+from pyglet import gl
 
 if TYPE_CHECKING:
     from .scene import Scene
@@ -31,6 +31,7 @@ class SceneSection(Component):
         return Hitbox(self, (0, self.__width), (0, self.__height))
         
     def draw(self):
+        super().draw()
         self.get_hitbox().draw()
 
     def index(self):
@@ -52,10 +53,13 @@ class SceneSection(Component):
     def includes_component(self, component: Component):
         return component in self.__components_set
     
-    def handle_collisions(self):
+    def get_possible_collisions(self) -> List[Tuple[Component, Component]]:
+        collisions = []
         for i in range(len(self.__components_list)):
             component1 = self.__components_list[i]
-            self.__scene.border().handle_component_collision(component1)
+            if self.__next_to_border:
+                self.__scene.border().handle_component_collision(component1)
             for j in range(i + 1, len(self.__components_list)):
                 component2 = self.__components_list[j]
-                Collision.handle(component1, component2)
+                collisions.append((component1, component2))
+        return collisions

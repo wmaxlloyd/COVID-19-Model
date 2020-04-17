@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 class Random:
     def __init__(self, scene: 'Scene', vel_range: Tuple[int, int]):
         self.scene = scene
-        vel_range = vel_range or (1,5)
+        vel_range = vel_range or (1,4)
         self.vel_range = vel_range
 
     def position(self, buffer_x = 10, buffer_y = 10):
@@ -23,10 +23,10 @@ class Random:
         angle_rad = randint(0, 360) / 360 * 2 * pi
         return (velocity * cos(angle_rad), velocity * sin(angle_rad))
     
-    def ball(self, radius=5):
+    def ball(self, radius=5, **kwargs):
         velocity = self.velocity()
         buffers = (radius, radius)
         ball = None
         while not ball or self.scene.contains_collision_with(ball):
-            ball = Ball(init_pos=self.position(*buffers), init_vel=velocity, radius=radius)
+            ball = Ball(init_pos=self.position(*buffers), init_vel=velocity, radius=radius, **kwargs)
         self.scene.add_componenet(ball)
