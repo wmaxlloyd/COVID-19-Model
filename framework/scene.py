@@ -42,7 +42,6 @@ class Scene():
 
     def draw(self):
         glClear(GL_COLOR_BUFFER_BIT)
-        self.__section_manager.draw_sections()
         for componet in self.__components:
             componet.draw()
 

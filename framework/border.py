@@ -1,5 +1,6 @@
 from .component import Component
 from typing import Tuple
+from .vector import VectorDirection
 
 class Border():
     def __init__(self, width, height):
@@ -11,11 +12,11 @@ class Border():
         hitbox = component.get_hitbox()
         vel = component.vel
         if hitbox.left() <= 0:
-            component.vel.array[0] = max(vel.x(), -1 * vel.x())
+            component.vel.set_x_direction(VectorDirection.POSITIVE)
         elif hitbox.right() >= self.width:
-            component.vel.array[0] = min(vel.x(), -1 * vel.x())
+            component.vel.set_x_direction(VectorDirection.NEGATIVE)
 
         if hitbox.bottom() <= 0:
-            component.vel.array[1] = max(vel.y(), -1 * vel.y())
+            component.vel.set_y_direction(VectorDirection.POSITIVE)
         elif hitbox.top() >= self.height:
-            component.vel.array[1] = min(vel.y(), -1 * vel.y())
+            component.vel.set_y_direction(VectorDirection.NEGATIVE)

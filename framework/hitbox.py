@@ -1,6 +1,7 @@
 from typing import Tuple, TYPE_CHECKING
 from .vector import Vector
 from pyglet.gl import *
+from math import inf
 
 if TYPE_CHECKING:
     from .component import Component
@@ -19,16 +20,16 @@ class Hitbox:
             Vector(self.left(), self.bottom()),
         )
     
-    def left(self):
+    def left(self) -> float:
         return self.__component.pos.x() + self.width_range[0]
     
-    def right(self):
+    def right(self) -> float:
         return self.__component.pos.x() + self.width_range[1] 
     
-    def top(self):
+    def top(self) -> float:
         return self.__component.pos.y() + self.height_range[1]
     
-    def bottom(self):
+    def bottom(self) -> float:
         return self.__component.pos.y() + self.height_range[0]
 
     def contains_point(self, point: Vector):
@@ -47,12 +48,10 @@ class Hitbox:
             self.left() > hitbox.right()
         )
     
-    def is_fully_contained_within(self, hitbox: 'Hitbox'):
+    def contains(self, coordinate: Vector) -> bool:
         return (
-            self.bottom() > hitbox.bottom() and
-            self.top() < hitbox.top() and
-            self.left() > hitbox.left() and
-            self.right() < hitbox.right()
+            self.bottom() <= coordinate.y() <= self.top() and
+            self.left <= coordinate.x() <= self.right()
         )
     
     def draw(self):
@@ -64,3 +63,8 @@ class Hitbox:
             glVertex3f(point1.x(), point1.y(), 0)
             glVertex3f(point2.x(), point2.y(), 0)
         glEnd()
+    
+    def add_padding(self, padding: float) -> 'Hitbox':
+        self.width_range = [self.width_range[0] - padding, self.width_range[1] + padding]
+        self.height_range = [self.height_range[0] - padding, self.height_range[1] + padding]
+        return self

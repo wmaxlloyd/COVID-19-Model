@@ -2,8 +2,9 @@ from .component import Component
 from .border import Border
 from .ball import Ball
 from typing import Tuple, List
-from .vector import Vector
+from .vector import Vector, VectorDirection
 from math import sin, cos
+from .wall import Wall
 
 class Collision:
     def __init__(self, comp1: Component, comp2: Component):
@@ -15,6 +16,12 @@ class Collision:
         if isinstance(self.components[0], type2) and isinstance(self.components[1], type1):
             return True
         return False
+    
+    def get_component(self, CompType, exclude = None):
+        for component in self.components:
+            if isinstance(component, CompType) and (not exclude or not isinstance(component, exclude)):
+                return component
+        raise Exception(f"Unable to find component {CompType}")
 
     @staticmethod
     def handle(comp1: Component, comp2: Component) -> None:
@@ -23,6 +30,8 @@ class Collision:
         collision = Collision(comp1, comp2)
         if collision.is_between_types(Ball, Ball):
             return collision.__handle_collision_between_balls()
+        if collision.is_between_types(Ball, Wall):
+            return collision.__handle_collision_between_ball_and_wall()
         raise Exception(f"Unrecognized collision {type(comp1)} & {type(comp2)}")
 
     @staticmethod  
@@ -36,6 +45,27 @@ class Collision:
             Collision.handle(comp1, comp2)
             handled_collisions.add(collision_id)
     
+    def __handle_collision_between_ball_and_wall(self):
+        ball: Ball = self.get_component(Ball)
+        wall: Wall = self.get_component(Wall)
+        wall_hitbox = wall.get_hitbox()
+        for coordinate in wall_hitbox.get_coordinates():
+            if ball.pos.distanceFrom(coordinate) < ball.radius:
+                print("Special Collision")
+                ball.vel.reflect_x()
+                ball.vel.reflect_y()
+                return
+        
+        min_distance_to_wall = min(
+            (ball.pos.x() - wall_hitbox.left(), 'set_x_direction', VectorDirection.NEGATIVE),
+            (wall_hitbox.right() - ball.pos.x(), 'set_x_direction', VectorDirection.POSITIVE),
+            (ball.pos.y() - wall_hitbox.bottom(), 'set_y_direction', VectorDirection.NEGATIVE),
+            (wall_hitbox.top() - ball.pos.y(), 'set_y_direction', VectorDirection.POSITIVE),
+            key = lambda item: item[0]
+        )
+        ball.vel.__getattribute__(min_distance_to_wall[1])(min_distance_to_wall[2])
+        
+
     def __handle_collision_between_balls(self):
         ball1: Ball = self.components[0]
         ball2: Ball = self.components[1]

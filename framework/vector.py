@@ -1,7 +1,12 @@
 import numpy
 from numpy import cos, sin, sqrt
-from math import pi
+from math import pi, acos
 from typing import Tuple
+from enum import Enum
+
+class VectorDirection(Enum):
+    POSITIVE = 0
+    NEGATIVE = 1
 
 class Vector:
     def __init__(self, x: float, y: float):
@@ -10,19 +15,45 @@ class Vector:
     def x(self):
         return self.array[0]
     
+    def reflect_x(self):
+        self.array[0] = -1 * self.array[0]
+        return self
+    
+    def set_x_direction(self, direction: VectorDirection):
+        if direction == VectorDirection.POSITIVE and self.x() < 0:
+            self.reflect_x()
+        if direction == VectorDirection.NEGATIVE and self.x() > 0:
+            self.reflect_x()
+        return self
+    
+    def set_y_direction(self, direction: VectorDirection):
+        if direction == VectorDirection.POSITIVE and self.y() < 0:
+            self.reflect_y()
+        if direction == VectorDirection.NEGATIVE and self.y() > 0:
+            self.reflect_y()
+        return self
+    
     def y(self):
         return self.array[1]
+    
+    def reflect_y(self):
+        self.array[1] = -1 * self.array[1]
+        return self
     
     def magnitude(self) -> float:
         return sqrt(self.x() ** 2 + self.y() ** 2)
 
-    def unit_vector(self) -> numpy.array:
-        return self.array / self.magnitude()
+    def unit_vector(self) -> 'Vector':
+        unit_vector_array = self.array / self.magnitude()
+        return Vector(*unit_vector_array)
+
+    def dot(self, v: 'Vector') -> float:
+        return numpy.dot(self.array, v.array)
 
     def get_angle_between(self, v: 'Vector') -> float:
-        dot_product = numpy.dot(self.unit_vector(), v.unit_vector())
+        dot_product = self.dot(v)
         approx_clipped_product = numpy.clip(dot_product, -1.0, 1.0)
-        return numpy.arccos(approx_clipped_product)
+        return acos(approx_clipped_product)
 
     def get_acute_angle_between(self, v: 'Vector') -> float:
         angle = self.get_angle_between(v)
@@ -37,7 +68,7 @@ class Vector:
         self.array = new_vector
 
     def set_magnitude(self, length = 1):
-        new_vector = self.unit_vector() * length
+        new_vector = self.unit_vector().array * length
         self.array = new_vector
 
     def transform(self , angle = 0.0, magnitude = 1):
