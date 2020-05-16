@@ -1,22 +1,29 @@
 import pyglet
-from framework.ball import Ball
+from parts.person import Person, HealthStatus
 from framework.scene import Scene
 from random import randint
 from framework.wall import Wall
 
 window = pyglet.window.Window()
 scene = Scene(window)
-generate = scene.generator()
+ballGenerator = scene.generator(Person)
 
-# scene.add_componenet(
-#     Wall(
-#         (50,50),
-#         (200,200)
-#     )
-# )
+(ballGenerator
+    .use_arg(ballGenerator.random_position_in_scene)
+    .use_arg(ballGenerator.random_velocity_with_magnitude_range(1,5))
+    .use_kwarg('health_status', HealthStatus.HEALTHY)
+)
+
+scene.add_componenet(
+    Person(
+        (10,10),
+        (1,1),
+        health_status=HealthStatus.INCUBATING
+    )
+)
 
 for i in range(100):
-    generate.ball(radius=5)
+    ballGenerator.generate()
 
 
 

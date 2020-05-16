@@ -5,6 +5,7 @@ from typing import Tuple, List
 from .vector import Vector, VectorDirection
 from math import sin, cos
 from .wall import Wall
+from parts.person import Person, HealthStatus
 
 class Collision:
     def __init__(self, comp1: Component, comp2: Component):
@@ -28,6 +29,8 @@ class Collision:
         if not comp1.is_collision(comp2) or not comp2.is_collision(comp1):
             return
         collision = Collision(comp1, comp2)
+        if collision.is_between_types(Person, Person):
+            return collision.__handle_collision_between_people()
         if collision.is_between_types(Ball, Ball):
             return collision.__handle_collision_between_balls()
         if collision.is_between_types(Ball, Wall):
@@ -92,7 +95,15 @@ class Collision:
         ball1.vel = Vector.add(ball1_rel_vel_final, ball2.vel)
         ball2.vel = Vector.add(ball2_rel_vel_final, ball2.vel)
 
+    def __handle_collision_between_people(self):
+        self.__handle_collision_between_balls()
+        person1: Person = self.components[0]
+        person2: Person = self.components[1]
 
+        if person1.is_contagious() and not person2.is_immune():
+            person2.set_new_health_status(HealthStatus.INCUBATING)
+        if person2.is_contagious() and not person1.is_immune():
+            person1.set_new_health_status(HealthStatus.INCUBATING)
 
 
 

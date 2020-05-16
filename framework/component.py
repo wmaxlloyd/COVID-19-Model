@@ -18,6 +18,9 @@ class Component:
     def update_position(self):
         self.pos = Vector.add(self.pos, self.vel)
 
+    def update_state(self):
+        self.update_position()
+
     @abstractmethod
     def get_hitbox(self) -> Hitbox:
         pass

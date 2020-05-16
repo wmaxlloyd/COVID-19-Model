@@ -6,8 +6,8 @@ from .hitbox import Hitbox
 from .vector import Vector
 
 class Ball(Component):
-    def __init__(self, init_pos = (0,0), init_vel = (0,0), radius = 10, **kwargs):
-        super().__init__(init_pos, init_vel, **kwargs)
+    def __init__(self, *args, radius = 10, **kwargs):
+        super().__init__(*args, **kwargs)
         self.radius = radius
         self.__prepareDraw()
 

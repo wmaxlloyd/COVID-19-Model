@@ -3,7 +3,7 @@ from typing import Set, List, Tuple
 from .component import Component
 from .hitbox import Hitbox
 from pyglet.gl import glClear, GL_COLOR_BUFFER_BIT
-from framework.random import Random
+from .generator import ComponentGenerator
 import uuid
 from .border import Border
 from .scene_section_manager import SceneSectionManager
@@ -17,8 +17,8 @@ class Scene():
         self.__border = Border(self.__width, self.__height)
         self.__section_manager = SceneSectionManager(self, 10, 10)
 
-    def generator(self, **kwargs):
-        return Random(self, kwargs)
+    def generator(self, ComponentConstructor: Component):
+        return ComponentGenerator(self, ComponentConstructor)
     
     def width(self):
         return self.__width
@@ -37,7 +37,7 @@ class Scene():
         self.__section_manager.handle_collisions()
         self.__section_manager.reset()
         for component in self.__components:
-            component.update_position()
+            component.update_state()
             self.__section_manager.classify_component(component)
 
     def draw(self):
