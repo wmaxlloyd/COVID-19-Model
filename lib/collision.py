@@ -5,7 +5,7 @@ from typing import Tuple, List
 from .vector import Vector, VectorDirection
 from math import sin, cos
 from .wall import Wall
-from parts.person import Person, HealthStatus
+from sliar_model.basic_agent import BasicAgent
 
 class Collision:
     def __init__(self, comp1: Component, comp2: Component):
@@ -29,7 +29,7 @@ class Collision:
         if not comp1.is_collision(comp2) or not comp2.is_collision(comp1):
             return
         collision = Collision(comp1, comp2)
-        if collision.is_between_types(Person, Person):
+        if collision.is_between_types(BasicAgent, BasicAgent):
             return collision.__handle_collision_between_people()
         if collision.is_between_types(Ball, Ball):
             return collision.__handle_collision_between_balls()
@@ -97,14 +97,10 @@ class Collision:
 
     def __handle_collision_between_people(self):
         self.__handle_collision_between_balls()
-        person1: Person = self.components[0]
-        person2: Person = self.components[1]
-
-        if person1.is_contagious() and not person2.is_immune():
-            person2.set_new_health_status(HealthStatus.INCUBATING)
-        if person2.is_contagious() and not person1.is_immune():
-            person1.set_new_health_status(HealthStatus.INCUBATING)
-
+        person1: BasicAgent = self.components[0]
+        person2: BasicAgent = self.components[1]
+        person1.infect_agent(person2)
+        person2.infect_agent(person1)
 
 
 

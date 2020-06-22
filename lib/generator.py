@@ -45,7 +45,7 @@ class ComponentGenerator:
         while collision_check and self.__scene.contains_collision_with(component):
             component = self.__generate_component()
         self.__scene.add_componenet(component)
-        return self
+        return component
 
     def use_arg(self, arg: RandomValueConfig):
         self.__constructor_args.append(arg)

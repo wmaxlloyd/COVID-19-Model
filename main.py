@@ -1,31 +1,23 @@
 import pyglet
-from parts.person import Person, HealthStatus
-from framework.scene import Scene
+from sliar_model.basic_agent import BasicAgent
+from lib.scene import Scene
 from random import randint
-from framework.wall import Wall
+from lib.wall import Wall
+from sliar_model.covid import Covid
 
 window = pyglet.window.Window()
 scene = Scene(window)
-ballGenerator = scene.generator(Person)
+personGenerator = scene.generator(BasicAgent)
 
-(ballGenerator
-    .use_arg(ballGenerator.random_position_in_scene)
-    .use_arg(ballGenerator.random_velocity_with_magnitude_range(1,5))
-    .use_kwarg('health_status', HealthStatus.HEALTHY)
+(personGenerator
+    .use_arg(personGenerator.random_position_in_scene)
+    .use_arg(personGenerator.random_velocity_with_magnitude_range(1,5))
 )
 
-scene.add_componenet(
-    Person(
-        (10,10),
-        (1,1),
-        health_status=HealthStatus.INCUBATING
-    )
-)
+personGenerator.generate().infect_with(Covid)
 
 for i in range(100):
-    ballGenerator.generate()
-
-
+    personGenerator.generate()
 
 @window.event
 def on_draw():
