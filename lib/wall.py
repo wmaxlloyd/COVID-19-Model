@@ -1,8 +1,9 @@
 from .component import Component
 from .hitbox import Hitbox
 from typing import Tuple
-from .vector import Vector
+from .vector import Vector, VectorDirection
 from pyglet import gl
+from .collision_manager import CollisionManager
 
 class Wall(Component):
     def __init__(self, vert1: Tuple[int,int], vert2: Tuple[int,int], **kwargs):
@@ -22,3 +23,24 @@ class Wall(Component):
 
     def get_hitbox(self):
         return Hitbox(self, (0, self.width), (0, self.height))
+
+
+def handle_collision_between_comp_and_wall(wall: Wall, comp: Component):
+    wall_hitbox = wall.get_hitbox()
+    # for coordinate in wall_hitbox.get_coordinates():
+    #     if ball.pos.distanceFrom(coordinate) < comp.radius:
+    #         print("Special Collision")
+    #         ball.vel.reflect_x()
+    #         ball.vel.reflect_y()
+    #         return
+    
+    min_distance_to_wall = min(
+        (comp.pos.x() - wall_hitbox.left(), 'set_x_direction', VectorDirection.NEGATIVE),
+        (wall_hitbox.right() - comp.pos.x(), 'set_x_direction', VectorDirection.POSITIVE),
+        (comp.pos.y() - wall_hitbox.bottom(), 'set_y_direction', VectorDirection.NEGATIVE),
+        (wall_hitbox.top() - comp.pos.y(), 'set_y_direction', VectorDirection.POSITIVE),
+        key = lambda item: item[0]
+    )
+    comp.vel.__getattribute__(min_distance_to_wall[1])(min_distance_to_wall[2])
+
+CollisionManager.register_collision_type(Wall, Component, handle_collision_between_comp_and_wall)

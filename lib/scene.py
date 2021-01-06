@@ -7,6 +7,7 @@ from .generator import ComponentGenerator
 import uuid
 from .border import Border
 from .scene_section_manager import SceneSectionManager
+from .reporter import Reporter
 
 class Scene():
     def __init__(self, window: Window, section_dimensions: Tuple[int, int] = (5,5)):
@@ -16,6 +17,8 @@ class Scene():
         self.__components: Set[Component] = set()
         self.__border = Border(self.__width, self.__height)
         self.__section_manager = SceneSectionManager(self, 10, 10)
+        self.__reporters: List[Reporter] = []
+        self.__time_step = 0
 
     def generator(self, ComponentConstructor: Component):
         return ComponentGenerator(self, ComponentConstructor)
@@ -39,6 +42,9 @@ class Scene():
         for component in self.__components:
             component.update_state()
             self.__section_manager.classify_component(component)
+        for reporter in self.__reporters:
+            reporter.time_step_finished(self.__time_step)
+        self.__time_step += 1
 
     def draw(self):
         glClear(GL_COLOR_BUFFER_BIT)
@@ -51,3 +57,6 @@ class Scene():
             if scene_component.is_collision(component):
                 return True
         return False
+    
+    def add_reporter(self, reporter: Reporter):
+        self.__reporters.append(reporter)

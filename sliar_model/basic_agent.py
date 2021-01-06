@@ -1,5 +1,7 @@
 from lib.person import Person
+from lib.ball import Ball
 from lib.event_emitter import EventEmitter
+from lib.collision_manager import CollisionManager
 from .infection import Infection
 from enum import Enum
 from .statuses import susceptible, latent, infected, asymptomatic, AgentStatus
@@ -46,3 +48,9 @@ class BasicAgent(Person, EventEmitter):
         ):
             agent.infect_with(self.infection.__class__)
 
+def handle_collision_between_people(person1, person2):
+    person1.infect_agent(person2)
+    person2.infect_agent(person1)
+
+CollisionManager.register_collision_type(BasicAgent, BasicAgent, handle_collision_between_people)
+CollisionManager.register_collision_type(Ball, Ball, lambda c1, c2: None)

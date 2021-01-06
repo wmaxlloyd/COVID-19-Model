@@ -4,6 +4,7 @@ from pyglet import gl
 from math import pi, sin, cos
 from .hitbox import Hitbox
 from .vector import Vector
+from .collision_manager import CollisionManager
 
 class Ball(Component):
     def __init__(self, *args, radius = 10, **kwargs):
@@ -35,5 +36,29 @@ class Ball(Component):
     def get_hitbox(self):
         return Hitbox(self, (-self.radius, self.radius), (-self.radius, self.radius))
 
-    
+def handle_collision_between_balls(ball1: Ball, ball2: Ball):
+    if ball1.pos.distanceFrom(ball2.pos) > (ball1.radius + ball2.radius):
+        return
+    ball1_rel_vel = Vector.difference(ball1.vel, ball2.vel)
+    rel_pos_1_2 = Vector.difference(ball2.pos, ball1.pos)
+    if ball1_rel_vel.isParallelWith(rel_pos_1_2):
+        ball1_old_vel = ball1.vel
+        ball1.vel = ball2.vel
+        ball2.vel = ball1_old_vel
+        return
+
+    reflection_vector = Vector.perpendicular(rel_pos_1_2)
+    angle = ball1_rel_vel.get_angle_between(rel_pos_1_2)
+    ball1_rel_vel_final = Vector.scale(
+        reflection_vector,
+        ball1_rel_vel.magnitude() * cos(ball1_rel_vel.get_angle_between(reflection_vector))
+    )
+    ball2_rel_vel_final = Vector.scale(
+        rel_pos_1_2,
+        ball1_rel_vel.magnitude() * cos(ball1_rel_vel.get_angle_between(rel_pos_1_2))
+    )
+    ball1.vel = Vector.add(ball1_rel_vel_final, ball2.vel)
+    ball2.vel = Vector.add(ball2_rel_vel_final, ball2.vel)
+
+CollisionManager.register_collision_type(Ball, Ball, handle_collision_between_balls)
 

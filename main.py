@@ -4,9 +4,12 @@ from lib.scene import Scene
 from random import randint
 from lib.wall import Wall
 from sliar_model.covid import Covid
+from sliar_model.reporter import NewInfectionCount
 
 window = pyglet.window.Window()
+infectionCountReporter = NewInfectionCount()
 scene = Scene(window)
+scene.add_reporter(infectionCountReporter)
 personGenerator = scene.generator(BasicAgent)
 
 (personGenerator

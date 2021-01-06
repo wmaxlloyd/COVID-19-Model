@@ -1,6 +1,6 @@
 from .scene_section import SceneSection
 from typing import List, Tuple, TYPE_CHECKING
-from .collision import Collision
+from .collision_manager import CollisionManager
 
 if TYPE_CHECKING:
     from .scene import Scene
@@ -15,6 +15,7 @@ class SceneSectionManager:
         self.__section_width = self.__scene.width() / self.__columns
         self.__section_height = self.__scene.height() / self.__rows
         self.__init_section_matrix()
+        self.__collision_manager = CollisionManager()
 
     def __init_section_matrix(self):
         col_index = 0
@@ -61,7 +62,7 @@ class SceneSectionManager:
         for scene_section_list in self.__section_matrix:
             for scene_section in scene_section_list:
                 collisions += scene_section.get_possible_collisions()
-        Collision.handle_all(collisions)
+        self.__collision_manager.handle_all(collisions)
     
     def draw_sections(self):
         for scene_section_list in self.__section_matrix:
