@@ -21,8 +21,8 @@ class BasicAgent(Person, EventEmitter):
     def update_state(self):
         if self.infection:
             self.infection.update_infection()
-        self.vel.rotate(random() - .5)
-        self.vel.set_magnitude(randint(1, 5))
+        # self.vel.rotate(random() - .5)
+        # self.vel.set_magnitude(randint(1, 5))
         return super().update_state()
 
     def health_status(self):
@@ -38,6 +38,7 @@ class BasicAgent(Person, EventEmitter):
     def infect_with(self, infection: Infection):
         if self.can_be_infected():
             self.infection = infection(self)
+            self.update_health_status(infected)
     
     def is_contagious(self):
         return self.infection and self.infection.is_contagious()
@@ -57,4 +58,4 @@ def handle_collision_between_people(person1, person2):
     person2.infect_agent(person1)
 
 CollisionManager.register_collision_type(BasicAgent, BasicAgent, handle_collision_between_people)
-CollisionManager.register_collision_type(Ball, Ball, lambda c1, c2: None)
+# CollisionManager.register_collision_type(Ball, Ball, lambda c1, c2: None)

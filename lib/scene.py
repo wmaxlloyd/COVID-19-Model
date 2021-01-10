@@ -50,7 +50,6 @@ class Scene():
         glClear(GL_COLOR_BUFFER_BIT)
         for componet in self.__components:
             componet.draw()
-        self.__section_manager.draw_sections()
 
     def contains_collision_with(self, component: Component) -> bool:
         for scene_component in self.__components:
