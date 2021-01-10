@@ -1,3 +1,5 @@
+from random import randint, random
+
 from lib.person import Person
 from lib.ball import Ball
 from lib.event_emitter import EventEmitter
@@ -19,6 +21,8 @@ class BasicAgent(Person, EventEmitter):
     def update_state(self):
         if self.infection:
             self.infection.update_infection()
+        self.vel.rotate(random() - .5)
+        self.vel.set_magnitude(randint(1, 5))
         return super().update_state()
 
     def health_status(self):
