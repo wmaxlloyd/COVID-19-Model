@@ -93,7 +93,7 @@ class Vector:
 
     @staticmethod
     def perpendicular(v: 'Vector') -> 'Vector':
-        return Vector(-v.y(), v.x())
+        return Vector(v.y(), -v.x())
     
     @staticmethod
     def opposite(v: 'Vector') -> 'Vector':

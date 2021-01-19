@@ -3,7 +3,7 @@ from .component import Component
 from pyglet import gl
 from math import pi, sin, cos
 from .hitbox import Hitbox
-from .vector import Vector
+from .vector import Vector, VectorDirection
 from .collision_manager import CollisionManager
 
 class Ball(Component):
@@ -49,6 +49,8 @@ def handle_collision_between_balls(ball1: Ball, ball2: Ball):
 
     reflection_vector = Vector.perpendicular(rel_pos_1_2)
     angle = ball1_rel_vel.get_angle_between(rel_pos_1_2)
+    if angle > (pi / 2):
+        return
     ball1_rel_vel_final = Vector.scale(
         reflection_vector,
         ball1_rel_vel.magnitude() * cos(ball1_rel_vel.get_angle_between(reflection_vector))
@@ -57,8 +59,23 @@ def handle_collision_between_balls(ball1: Ball, ball2: Ball):
         rel_pos_1_2,
         ball1_rel_vel.magnitude() * cos(ball1_rel_vel.get_angle_between(rel_pos_1_2))
     )
+    if ball2.pos.y() <= ball1.pos.y():
+        ball2_rel_vel_final.set_y_direction(VectorDirection.POSITIVE)
+        ball1_rel_vel_final.set_y_direction(VectorDirection.NEGATIVE)
+    else:
+        ball2_rel_vel_final.set_y_direction(VectorDirection.NEGATIVE)
+        ball1_rel_vel_final.set_y_direction(VectorDirection.POSITIVE)
+    
+    if ball2.pos.x() <= ball1.pos.x():
+        ball2_rel_vel_final.set_x_direction(VectorDirection.POSITIVE)
+        ball1_rel_vel_final.set_x_direction(VectorDirection.NEGATIVE)
+    else:
+        ball2_rel_vel_final.set_x_direction(VectorDirection.NEGATIVE)
+        ball1_rel_vel_final.set_x_direction(VectorDirection.POSITIVE)
+
     ball1.vel = Vector.add(ball1_rel_vel_final, ball2.vel)
     ball2.vel = Vector.add(ball2_rel_vel_final, ball2.vel)
+
 
 CollisionManager.register_collision_type(Ball, Ball, handle_collision_between_balls)
 
