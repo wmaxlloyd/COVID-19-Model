@@ -1,4 +1,4 @@
-from pyglet.window import Window
+import pyglet
 from typing import Set, List, Tuple
 from .component import Component
 from .hitbox import Hitbox
@@ -10,15 +10,19 @@ from .scene_section_manager import SceneSectionManager
 from .reporter import Reporter
 
 class Scene():
-    def __init__(self, window: Window, section_dimensions: Tuple[int, int] = (5,5)):
-        self.__width = window.width
-        self.__height = window.height
-        self.__window = window
+    def __init__(self, section_dimensions: Tuple[int, int] = (5,5)):
+        self.__window = pyglet.window.Window()
+        self.__width = self.__window.width
+        self.__height = self.__window.height
         self.__components: Set[Component] = set()
         self.__border = Border(self.__width, self.__height)
         self.__section_manager = SceneSectionManager(self, 10, 10)
         self.__reporters: List[Reporter] = []
         self.__time_step = 0
+
+        @self.__window.event
+        def on_draw():
+            self.draw()
 
     def generator(self, ComponentConstructor: Component):
         return ComponentGenerator(self, ComponentConstructor)
@@ -59,3 +63,7 @@ class Scene():
     
     def add_reporter(self, reporter: Reporter):
         self.__reporters.append(reporter)
+    
+    def run(self):
+        pyglet.clock.schedule(self.update_state, 1/10)
+        pyglet.app.run()

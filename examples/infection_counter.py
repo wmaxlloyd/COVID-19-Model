@@ -3,7 +3,6 @@ if __name__ == "__main__":
     import os
     sys.path.append(os.getcwd())
 
-import pyglet
 from sliar_model.basic_agent import BasicAgent
 from lib.scene import Scene
 from random import randint
@@ -11,8 +10,7 @@ from lib.wall import Wall
 from sliar_model.covid import Covid
 from sliar_model.reporter import NewInfectionCount, EndWhenNoInfected
 
-window = pyglet.window.Window()
-scene = Scene(window)
+scene = Scene()
 scene.add_reporter(NewInfectionCount())
 scene.add_reporter(EndWhenNoInfected())
 personGenerator = scene.generator(BasicAgent)
@@ -27,10 +25,4 @@ personGenerator.generate().infect_with(Covid)
 for i in range(100):
     personGenerator.generate()
 
-@window.event
-def on_draw():
-    scene.draw()
-
-
-pyglet.clock.schedule(scene.update_state, 1/10)
-pyglet.app.run()
+scene.run()
